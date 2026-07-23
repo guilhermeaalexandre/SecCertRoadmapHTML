@@ -862,15 +862,15 @@
 
     .cert-status-badge {
             position: absolute;
-            top: -0.4vmax;
-            right: -0.4vmax;
-            width: 1vmax;
-            height: 1vmax;
-            line-height: 1vmax;
-            font-size: 0.7vmax;
+            top: -0.3vmax;
+            right: -0.3vmax;
+            width: 0.55vmax;
+            height: 0.55vmax;
+            line-height: 0.55vmax;
+            font-size: 0.5vmax;
             background: #ffffff;
             color: #666666;
-            border: 0.09vmax solid #999999;
+            border: 0.06vmax solid #999999;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -878,10 +878,20 @@
             justify-content: center;
             z-index: 2;
             user-select: none;
+            opacity: 0.55;
+            transform-origin: top right;
+            transition: transform 0.12s ease, opacity 0.12s ease;
     }
 
-    .cert-status-badge:hover {
-            transform: scale(1.35);
+    a[data-cert-status] .cert-status-badge {
+            opacity: 1;
+    }
+
+    .certcontainer a:hover .cert-status-badge,
+    .cert-status-badge:hover,
+    .cert-status-badge:focus {
+            transform: scale(2.1);
+            opacity: 1;
     }
 
     a[data-cert-status="owned"] {

@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <style>
     /* Set fill and line colors for certification boxes. dk suffix means "dark" for the line color. */
     :root {
@@ -846,19 +847,188 @@
     /* Make a static image if horizontal screen is smaller than 898px (iPhone size is 898)*/
     #interactive {display: block;}
     #static {display: none;}
-    
+
     @media screen and (max-width: 897px) {
-    
+
       #interactive {display: none;}
       #static {display: block;}
-    
+
+    }
+
+    /* --- Certification status tracking (owned / soon / long-term) --- */
+    .certcontainer a {
+            position: relative;
+    }
+
+    .cert-status-badge {
+            position: absolute;
+            top: -0.4vmax;
+            right: -0.4vmax;
+            width: 1vmax;
+            height: 1vmax;
+            line-height: 1vmax;
+            font-size: 0.7vmax;
+            background: #ffffff;
+            color: #666666;
+            border: 0.09vmax solid #999999;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            user-select: none;
+    }
+
+    .cert-status-badge:hover {
+            transform: scale(1.35);
+    }
+
+    a[data-cert-status="owned"] {
+            outline: 0.18vmax solid #2ecc71;
+            outline-offset: 0.06vmax;
+    }
+
+    a[data-cert-status="soon"] {
+            outline: 0.18vmax solid #f1c40f;
+            outline-offset: 0.06vmax;
+    }
+
+    a[data-cert-status="longterm"] {
+            outline: 0.18vmax solid #3498db;
+            outline-offset: 0.06vmax;
+    }
+
+    a[data-cert-status="owned"] .cert-status-badge {
+            background: #2ecc71;
+            border-color: #1e8449;
+            color: #ffffff;
+    }
+
+    a[data-cert-status="soon"] .cert-status-badge {
+            background: #f1c40f;
+            border-color: #b7950b;
+            color: #000000;
+    }
+
+    a[data-cert-status="longterm"] .cert-status-badge {
+            background: #3498db;
+            border-color: #1f618d;
+            color: #ffffff;
+    }
+
+    #cert-controls {
+            position: fixed;
+            top: 1vmax;
+            right: 1vmax;
+            z-index: 1000;
+            background: #ffffff;
+            color: #323232;
+            border: 0.08vmax solid #cccccc;
+            border-radius: 0.5vmax;
+            font-size: 0.85vmax;
+            font-family: "Segoe UI", "Calibri", Tahoma, "Geneva", Verdana, sans-serif;
+            box-shadow: 0 0.2vmax 0.6vmax rgba(0, 0, 0, 0.2);
+            max-width: 16vmax;
+    }
+
+    #cert-controls-toggle {
+            display: block;
+            width: 2.2vmax;
+            height: 2.2vmax;
+            border: none;
+            border-radius: 50%;
+            background: #323232;
+            color: #ffffff;
+            font-size: 1.1vmax;
+            cursor: pointer;
+            margin: 0;
+    }
+
+    #cert-controls-panel {
+            display: none;
+            padding: 0.7vmax 0.9vmax;
+    }
+
+    #cert-controls.open #cert-controls-panel {
+            display: block;
+    }
+
+    #cert-controls .cert-controls-title {
+            font-weight: 600;
+            font-size: 1vmax;
+            margin-bottom: 0.5vmax;
+    }
+
+    #cert-controls .cert-filter-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 0.3vmax;
+            padding: 0.3vmax 0.4vmax;
+            border: 0.08vmax solid #cccccc;
+            border-radius: 0.3vmax;
+            background: #f7f7f7;
+            color: #323232;
+            cursor: pointer;
+            font-size: 0.85vmax;
+            font-family: inherit;
+    }
+
+    #cert-controls .cert-filter-btn.active {
+            border-color: #323232;
+            background: #e6e6e6;
+            font-weight: 600;
+    }
+
+    #cert-controls .cert-controls-hint {
+            font-size: 0.75vmax;
+            color: #666666;
+            margin: 0.4vmax 0;
+    }
+
+    #cert-controls #cert-reset-btn {
+            display: block;
+            width: 100%;
+            margin-top: 0.3vmax;
+            padding: 0.3vmax 0.4vmax;
+            border: 0.08vmax solid #c0514d;
+            border-radius: 0.3vmax;
+            background: #ffffff;
+            color: #c0514d;
+            cursor: pointer;
+            font-size: 0.85vmax;
+            font-family: inherit;
+    }
+
+    #cert-controls #cert-reset-btn:hover {
+            background: #c0514d;
+            color: #ffffff;
+    }
+
+    body[data-cert-filter="owned"] .certcontainer a:not([data-cert-status="owned"]),
+    body[data-cert-filter="soon"] .certcontainer a:not([data-cert-status="soon"]),
+    body[data-cert-filter="longterm"] .certcontainer a:not([data-cert-status="longterm"]) {
+            opacity: 0.12;
     }
     </style>
-    
+
+    <div id="cert-controls">
+            <button type="button" id="cert-controls-toggle" title="Minhas Certificações" aria-label="Abrir painel Minhas Certificações">☰</button>
+            <div id="cert-controls-panel">
+                    <div class="cert-controls-title">Minhas Certificações</div>
+                    <button type="button" class="cert-filter-btn" data-filter="owned">✔ Já possuo (<span id="cert-count-owned">0</span>)</button>
+                    <button type="button" class="cert-filter-btn" data-filter="soon">🎯 Em breve (<span id="cert-count-soon">0</span>)</button>
+                    <button type="button" class="cert-filter-btn" data-filter="longterm">🕒 Médio/longo prazo (<span id="cert-count-longterm">0</span>)</button>
+                    <div class="cert-controls-hint">Clique no círculo no canto de cada certificação para marcar seu status (clique novamente para avançar). Clique nos botões acima para destacar apenas um grupo.</div>
+                    <button type="button" id="cert-reset-btn">Limpar marcações</button>
+            </div>
+    </div>
+
     <div id="static">
             <img src="https://pauljerimy.com/wp-content/uploads/2022/03/SCRApril2022.png" alt="Static Security Certification Chart (April 2022)" class="wp-image-309">
     </div>
-    
+
     <div id="interactive" class="certchart">
         <div style="text-align:left;font-size:200%;font-weight:500;padding-bottom:0.2vmax;">Security Certification Roadmap
 
@@ -2512,3 +2682,143 @@
             <div class="key">481 certifications listed | July 2024</div>
             <div class="key"> <br></div>
     </div>
+
+    <script>
+    (function () {
+            var STORAGE_KEY = 'certRoadmapStatus';
+            var STATUS_CYCLE = ['', 'owned', 'soon', 'longterm'];
+            var STATUS_LABELS = {
+                    '': 'Sem marcação',
+                    owned: 'Já possuo',
+                    soon: 'Pretendo conquistar em breve',
+                    longterm: 'Desejo em médio/longo prazo'
+            };
+            var STATUS_ICONS = { '': '', owned: '✔', soon: '🎯', longterm: '🕒' };
+
+            function loadStatuses() {
+                    try {
+                            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+                    } catch (e) {
+                            return {};
+                    }
+            }
+
+            function saveStatuses(statuses) {
+                    try {
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(statuses));
+                    } catch (e) { /* storage unavailable, ignore */ }
+            }
+
+            function applyStatus(link, badge, status) {
+                    if (status) {
+                            link.setAttribute('data-cert-status', status);
+                    } else {
+                            link.removeAttribute('data-cert-status');
+                    }
+                    badge.textContent = STATUS_ICONS[status] || '';
+                    var label = 'Marcar status: ' + STATUS_LABELS[status];
+                    badge.setAttribute('title', label);
+                    badge.setAttribute('aria-label', label);
+            }
+
+            function updateCounts(statuses) {
+                    var counts = { owned: 0, soon: 0, longterm: 0 };
+                    Object.keys(statuses).forEach(function (k) {
+                            if (counts.hasOwnProperty(statuses[k])) counts[statuses[k]]++;
+                    });
+                    ['owned', 'soon', 'longterm'].forEach(function (key) {
+                            var el = document.getElementById('cert-count-' + key);
+                            if (el) el.textContent = counts[key];
+                    });
+            }
+
+            function init() {
+                    var container = document.querySelector('#interactive .certcontainer');
+                    if (!container) return;
+                    var links = Array.prototype.slice.call(container.querySelectorAll('a[href]'));
+                    var statuses = loadStatuses();
+
+                    links.forEach(function (link, idx) {
+                            var key = link.getAttribute('href') || ('idx-' + idx);
+                            link.setAttribute('data-cert-key', key);
+
+                            var badge = document.createElement('span');
+                            badge.className = 'cert-status-badge';
+                            badge.setAttribute('tabindex', '0');
+                            badge.setAttribute('role', 'button');
+                            link.appendChild(badge);
+
+                            applyStatus(link, badge, statuses[key] || '');
+
+                            function cycle(e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    var cur = link.getAttribute('data-cert-status') || '';
+                                    var next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(cur) + 1) % STATUS_CYCLE.length];
+                                    if (next === '') {
+                                            delete statuses[key];
+                                    } else {
+                                            statuses[key] = next;
+                                    }
+                                    applyStatus(link, badge, next);
+                                    saveStatuses(statuses);
+                                    updateCounts(statuses);
+                            }
+
+                            badge.addEventListener('click', cycle);
+                            badge.addEventListener('keydown', function (e) {
+                                    if (e.key === 'Enter' || e.key === ' ') cycle(e);
+                            });
+                    });
+
+                    updateCounts(statuses);
+
+                    var controls = document.getElementById('cert-controls');
+                    var toggleBtn = document.getElementById('cert-controls-toggle');
+                    if (controls && toggleBtn) {
+                            toggleBtn.addEventListener('click', function () {
+                                    controls.classList.toggle('open');
+                            });
+                            document.addEventListener('click', function (e) {
+                                    if (controls.classList.contains('open') && !controls.contains(e.target)) {
+                                            controls.classList.remove('open');
+                                    }
+                            });
+                    }
+
+                    var filterButtons = Array.prototype.slice.call(document.querySelectorAll('.cert-filter-btn'));
+                    filterButtons.forEach(function (btn) {
+                            btn.addEventListener('click', function () {
+                                    var filter = btn.getAttribute('data-filter');
+                                    var isActive = btn.classList.contains('active');
+                                    document.body.removeAttribute('data-cert-filter');
+                                    filterButtons.forEach(function (b) { b.classList.remove('active'); });
+                                    if (!isActive) {
+                                            document.body.setAttribute('data-cert-filter', filter);
+                                            btn.classList.add('active');
+                                    }
+                            });
+                    });
+
+                    var resetBtn = document.getElementById('cert-reset-btn');
+                    if (resetBtn) {
+                            resetBtn.addEventListener('click', function () {
+                                    if (!window.confirm('Remover todas as marcações de certificações salvas neste navegador?')) return;
+                                    statuses = {};
+                                    saveStatuses(statuses);
+                                    links.forEach(function (link) {
+                                            var badge = link.querySelector('.cert-status-badge');
+                                            applyStatus(link, badge, '');
+                                    });
+                                    updateCounts(statuses);
+                            });
+                    }
+            }
+
+            if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', init);
+            } else {
+                    init();
+            }
+    })();
+    </script>
